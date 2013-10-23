@@ -25,25 +25,22 @@ void HotStepper::addNext(HotStepper *ref){
 }
 
 void HotStepper::instanceSetup(){
-/*
-  Serial.println("initting");
-  Serial.println(PORTC, HEX);
-  if(_port == PORTB){
-    Serial.println("portb");
+  if(_port == &PORTB){
     DDRB |= (0x0F << _offset);
-  }else if(_port == PORTC){
-    Serial.println("portc");
+  }else if(_port == &PORTC){
     DDRC |= (0x0F << _offset);
-  }else if(_port == PORTD){
-    Serial.println("portd");
+  }else if(_port == &PORTD){
     DDRD |= (0x0F << _offset);
-  }else{
-    Serial.println("no match");
-    }
-    */
+  }
+  if(nextInstance){
+    nextInstance->instanceSetup();
+  }
 }
 
 void HotStepper::setup(){
+  if(firstInstance){
+    firstInstance->instanceSetup();
+  }
   // initialize Timer1
   cli();          // disable global interrupts
   TCCR1A = 0;     // set entire TCCR1A register to 0

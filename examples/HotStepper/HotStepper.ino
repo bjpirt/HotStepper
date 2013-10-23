@@ -8,12 +8,11 @@ byte dir;
 void setup(){
   dir = FORWARD;
   pinMode(19, OUTPUT);
-  pinMode(18, OUTPUT);
   Serial.begin(115200);
   Serial.println("stepper test!");
   HotStepper::setup();
-  stepper1.instanceSetup();
-  DDRC |= (0x0F << 0);
+  //stepper1.instanceSetup();
+  //DDRC |= (0x0F << 0);
   stepper1.turn(10, FORWARD);
 }
 
