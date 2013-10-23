@@ -41,7 +41,8 @@ void HotStepper::setup(){
   if(firstInstance){
     firstInstance->instanceSetup();
   }
-  // initialize Timer1
+
+  // initialize Timer1 for a 3ms duty cycle
   cli();          // disable global interrupts
   TCCR1A = 0;     // set entire TCCR1A register to 0
   TCCR1B = 0;     // same for TCCR1B
@@ -52,8 +53,6 @@ void HotStepper::setup(){
   TCCR1B |= (1 << WGM12);
   // Set CS10 bit for no prescaler:
   TCCR1B |= (1 << CS10);
-  TCCR1B |= (1 << CS11);
-//  TCCR1B |= (1 << CS12);
   // enable timer compare interrupt:
   TIMSK1 |= (1 << OCIE1A);
   // enable global interrupts:
