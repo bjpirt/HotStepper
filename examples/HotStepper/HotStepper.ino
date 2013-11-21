@@ -23,10 +23,10 @@ void loop(){
   // ready will return true when the stepper has moved the desired number of steps
   if(stepper1.ready()){
     dir1 = !dir1;
-    stepper1.turn(10, dir1);
+    stepper1.turn(1000, dir1);
   }
   if(stepper2.ready()){
     dir2 = !dir2;
-    stepper2.turn(20, dir2);
+    stepper2.turn(2000, dir2);
   }
 }
