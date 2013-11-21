@@ -42,21 +42,22 @@ void HotStepper::setup(){
     firstInstance->instanceSetup();
   }
 
-  // initialize Timer1 for a 3ms duty cycle
-  cli();          // disable global interrupts
-  TCCR1A = 0;     // set entire TCCR1A register to 0
-  TCCR1B = 0;     // same for TCCR1B
+  // initialize Timer2 for a 3ms duty cycle
+  cli();      // disable global interrupts
 
+  TCCR2A = 0; // set entire TCCR2A register to 0
+  TCCR2B = 0; // same for TCCR2B
+	TCNT2  = 0; // initialize counter value to 0
   // set compare match register to desired timer count:
-  OCR1A = 48000;
-  // turn on CTC mode:
-  TCCR1B |= (1 << WGM12);
-  // Set CS10 bit for no prescaler:
-  TCCR1B |= (1 << CS10);
-  // enable timer compare interrupt:
-  TIMSK1 |= (1 << OCIE1A);
-  // enable global interrupts:
-  sei();
+  OCR2A = 187;
+  // turn on CTC mode
+  TCCR2A |= (1 << WGM21);
+  // Set CS21 bit for 256 prescaler
+  TCCR2B |= (1 << CS21);   
+  TCCR2B |= (1 << CS22);   
+  // enable timer compare interrupt
+  TIMSK2 |= (1 << OCIE2A);
+  sei();      // ensable global interrupts
 }
 
 void HotStepper::pause(){
@@ -130,8 +131,7 @@ void HotStepper::triggerTop(){
   }
 }
 
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER2_COMPA_vect)
 {
-  Serial.println("int");
   HotStepper::triggerTop();
 }
