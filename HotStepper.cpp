@@ -53,11 +53,11 @@ void HotStepper::setup(){
   // turn on CTC mode
   TCCR2A |= (1 << WGM21);
   // Set CS21 bit for 256 prescaler
-  TCCR2B |= (1 << CS21);   
-  TCCR2B |= (1 << CS22);   
+  TCCR2B |= (1 << CS21);
+  TCCR2B |= (1 << CS22);
   // enable timer compare interrupt
   TIMSK2 |= (1 << OCIE2A);
-  sei();      // ensable global interrupts
+  sei();      // enable global interrupts
 }
 
 void HotStepper::pause(){
@@ -97,7 +97,6 @@ byte HotStepper::nextStep(byte currentStep){
 
 void HotStepper::setNextStep(){
   if(_remaining > 0 && !_paused){
-    digitalWrite(18, !digitalRead(18));
     _remaining--;
     setStep(nextStep(((byte)*_port >> _offset) & 0x0F));
   }else{
