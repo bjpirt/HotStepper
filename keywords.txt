@@ -1,8 +1,8 @@
-HotStepper    KEYWORD1
-setup         KEYWORD2
-turn          KEYWORD2
-ready         KEYWORD2
-remaining     KEYWORD2
-release       KEYWORD2
-pause         KEYWORD2
-resume        KEYWORD2
+HotStepper	KEYWORD1
+setup	KEYWORD2
+turn	KEYWORD2
+ready	KEYWORD2
+remaining	KEYWORD2
+release	KEYWORD2
+pause	KEYWORD2
+resume	KEYWORD2
