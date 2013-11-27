@@ -25,7 +25,7 @@ class HotStepper {
     boolean _paused;
     volatile uint8_t* _port;
     byte _offset;
-    long _remaining;
+    volatile long _remaining;
     byte _dir;
     byte nextStep(byte);
     void setStep(byte);
