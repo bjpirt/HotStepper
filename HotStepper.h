@@ -18,6 +18,7 @@ class HotStepper {
     static void triggerTop();
     void pause();
     void resume();
+    void stop();
   private:
     static HotStepper *firstInstance;
     HotStepper *nextInstance;

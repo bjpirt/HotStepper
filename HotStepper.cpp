@@ -68,6 +68,10 @@ void HotStepper::resume(){
   _paused = false;
 }
 
+void HotStepper::stop(){
+  _remaining = 0;
+}
+
 void HotStepper::turn(long steps, byte direction){
   _remaining = steps;
   _dir = direction;
