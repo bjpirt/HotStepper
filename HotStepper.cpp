@@ -116,7 +116,7 @@ void HotStepper::setStep(byte state){
 }
 
 void HotStepper::release(){
-  if(((byte)*_port >> _offset) & 0x0F != 0){
+  if((((byte)*_port >> _offset) & 0x0F) != 0){
     setStep(0);
   }
 }
