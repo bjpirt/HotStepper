@@ -34,13 +34,15 @@ class HotStepper {
     void addNext(HotStepper *ref);
     boolean _paused;
     volatile uint8_t* _port;
-    byte _offset;
+    byte _pinmask;
     volatile long _remaining;
     byte _dir;
-    byte nextStep(byte);
+    byte nextStep();
     void setStep(byte);
     void setNextStep();
     void trigger();
+    byte pad(byte, byte);
+    byte unpad(byte, byte);
 };
 
 #ifndef FROM_LIB

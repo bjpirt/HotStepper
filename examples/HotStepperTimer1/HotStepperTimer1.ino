@@ -1,3 +1,5 @@
+// Configure the library to use Timer 1
+#define HOTSTEPPER_TIMER1
 // Include the library
 #include <HotStepper.h>
 
@@ -11,8 +13,8 @@ byte dir2;
 void setup(){
   dir1 = FORWARD;
   dir2 = FORWARD;
-  // Make sure the ports and timer are configured
-  HotStepper::setup();
+  // Make sure the ports and timer are configured - tell it to use Timer 1
+  HotStepper::setup(TIMER1INT);
   // Control our steppers
   stepper1.turn(10, dir1);
   stepper2.turn(20, dir2);

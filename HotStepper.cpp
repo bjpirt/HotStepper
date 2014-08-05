@@ -4,9 +4,9 @@
 
 HotStepper *HotStepper::firstInstance;
 
-HotStepper::HotStepper(volatile uint8_t* port, byte offset) {
+HotStepper::HotStepper(volatile uint8_t* port, byte pinmask) {
   _port = port;
-  _offset = offset;
+  _pinmask = pinmask;
   _remaining = 0;
   _paused = false;
   release();
@@ -27,11 +27,11 @@ void HotStepper::addNext(HotStepper *ref){
 
 void HotStepper::instanceSetup(){
   if(_port == &PORTB){
-    DDRB |= (0x0F << _offset);
+    DDRB |= _pinmask;
   }else if(_port == &PORTC){
-    DDRC |= (0x0F << _offset);
+    DDRC |= _pinmask;
   }else if(_port == &PORTD){
-    DDRD |= (0x0F << _offset);
+    DDRD |= _pinmask;
   }
   if(nextInstance){
     nextInstance->instanceSetup();
@@ -102,7 +102,8 @@ long HotStepper::remaining(){
   return _remaining;
 }
 
-byte HotStepper::nextStep(byte currentStep){
+byte HotStepper::nextStep(){
+  byte currentStep = unpad(((byte)*_port), _pinmask);
   switch(currentStep){
     case B0000:
     case B0001:
@@ -119,7 +120,7 @@ byte HotStepper::nextStep(byte currentStep){
 void HotStepper::setNextStep(){
   if(_remaining > 0 && !_paused){
     _remaining--;
-    setStep(nextStep(((byte)*_port >> _offset) & 0x0F));
+    setStep(nextStep());
   }else{
     release();
   }
@@ -127,15 +128,52 @@ void HotStepper::setNextStep(){
 
 void HotStepper::setStep(byte state){
   byte nextState = (byte)*_port;
-  nextState &= ~(0x0F << _offset);
-  nextState |= state << _offset;
+  nextState &= ~_pinmask;
+  nextState |= pad(state, _pinmask);
   *_port = nextState;
 }
 
-void HotStepper::release(){
-  if((((byte)*_port >> _offset) & 0x0F) != 0){
-    setStep(0);
+byte HotStepper::pad(byte input, byte mask){
+  byte output = 0;
+  for(char i=0; i<8; i++){
+    if((mask & 1)){
+      //We should use this pin
+      if(input &1){
+        output |= 0b10000000;
+      }else{
+        output &= 0b01111111;
+      }
+      input >>= 1;
+    }
+    if(i<7){
+      output >>= 1;
+      mask >>= 1;
+    }
   }
+  return output;
+}
+
+byte HotStepper::unpad(byte input, byte mask){
+  byte output = 0;
+  for(char i=0; i<8; i++){
+    if((mask & 1)){
+      //We should use this pin
+      if(input & 1){
+        output |= 0b00001000;
+      }else{
+        output &= 0b11110111;
+      }
+      if(mask > 1){
+        output >>= 1;
+      }
+    }
+    input >>= 1;
+    mask >>= 1;
+  }
+  return output;
+}
+void HotStepper::release(){
+  setStep(0);
 }
 
 void HotStepper::trigger(){
