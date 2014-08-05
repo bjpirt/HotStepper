@@ -1,3 +1,4 @@
+#define FROM_LIB
 #include "Arduino.h"
 #include "HotStepper.h"
 
@@ -38,25 +39,41 @@ void HotStepper::instanceSetup(){
 }
 
 void HotStepper::setup(){
+  HotStepper::setup(TIMER2INT);
+}
+
+void HotStepper::setup(char timer){
   if(firstInstance){
     firstInstance->instanceSetup();
   }
-
   // initialize Timer2 for a 3ms duty cycle
   cli();      // disable global interrupts
-
-  TCCR2A = 0; // set entire TCCR2A register to 0
-  TCCR2B = 0; // same for TCCR2B
-	TCNT2  = 0; // initialize counter value to 0
-  // set compare match register to desired timer count:
-  OCR2A = 187;
-  // turn on CTC mode
-  TCCR2A |= (1 << WGM21);
-  // Set CS21 bit for 256 prescaler
-  TCCR2B |= (1 << CS21);
-  TCCR2B |= (1 << CS22);
-  // enable timer compare interrupt
-  TIMSK2 |= (1 << OCIE2A);
+  if(timer == TIMER1INT){
+    TCCR1A = 0;     // set entire TCCR1A register to 0
+    TCCR1B = 0;     // same for TCCR1B
+    TCNT1  = 0; // initialize counter value to 0
+    // set compare match register to desired timer count:
+    OCR1A = 48000 / (16/clockCyclesPerMicrosecond());
+    // turn on CTC mode:
+    TCCR1B |= (1 << WGM12);
+    // Set CS10 bit for no prescaler:
+    TCCR1B |= (1 << CS10);
+    // enable timer compare interrupt:
+    TIMSK1 |= (1 << OCIE1A);
+  }else{
+    TCCR2A = 0; // set entire TCCR2A register to 0
+    TCCR2B = 0; // same for TCCR2B
+    TCNT2  = 0; // initialize counter value to 0
+    // set compare match register to desired timer count:
+    OCR2A = 187 / (16/clockCyclesPerMicrosecond());
+    // turn on CTC mode
+    TCCR2A |= (1 << WGM21);
+    // Set CS21 and CS22 bits for 256 prescaler
+    TCCR2B |= (1 << CS21);
+    TCCR2B |= (1 << CS22);
+    // enable timer compare interrupt
+    TIMSK2 |= (1 << OCIE2A);
+  }
   sei();      // enable global interrupts
 }
 
@@ -134,7 +151,5 @@ void HotStepper::triggerTop(){
   }
 }
 
-ISR(TIMER2_COMPA_vect)
-{
-  HotStepper::triggerTop();
-}
+
+
